@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converter="clr-namespace:WeatherApplication.Converters"
+             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+             ios:Page.UseSafeArea="true"
+             x:Class="WeatherApplication.MainPage"
+             BackgroundImageSource="background.png">
+
+    <ContentPage.Resources>
+        <converter:LinkToImageConverter x:Key="linkToImage" />
+    </ContentPage.Resources>
+
+    <Grid Margin="5" RowDefinitions=".1*,.3*,.3*,.1*,.4*">
+        <Grid Grid.Row="0">
+            <Frame 
+                Margin="0.2"
+                BackgroundColor="Black"
+                CornerRadius="15">
+               
+
+                <SearchBar
+                    x:Name="searchBar"
+                    HeightRequest="100"
+                    WidthRequest="375"
+                    HorizontalOptions="Center"
+                    Placeholder="Search Location..."
+                    FontSize="Body"
+                    TextColor="White"
+                    SearchCommand="{Binding SearchCommand}"
+                    SearchCommandParameter="{Binding Source={x:Reference searchBar}, Path=Text}"
+                    VerticalOptions="Center"/>
+
+            </Frame>
+        </Grid>
+
+        <VerticalStackLayout
+            Grid.Row="1"
+            IsVisible="{Binding IsVisible}"
+            VerticalOptions="Center">
+
+            <Label
+                FontAttributes="Bold"
+                FontSize="Title"
+                HorizontalOptions="Center"
+                Text="{Binding Date, StringFormat='{0:dd MMMM dddd, yyyy}'}"
+                TextColor="White">
+            </Label>
+
+            <Image
+                HeightRequest="100"
+                Source="{Binding RootModel.current.condition.icon, Converter={StaticResource linkToImage}}"
+                WidthRequest="100" />
+
+        </VerticalStackLayout>
+
+        <Grid
+    Grid.Row="2"
+    ColumnDefinitions="*,*,*"
+    IsVisible="{Binding IsVisible}">
+            <VerticalStackLayout
+        Grid.Column="0"
+        HorizontalOptions="Center"
+        Spacing="5">
+                <Label FontAttributes="Bold" Text="Temperature" TextColor="White"/>
+                <Label
+            FontAttributes="Bold"
+            FontSize="Title"
+            Text="{Binding RootModel.current.temp_c, StringFormat='{0} °C'}"
+            TextColor="White" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout
+        Grid.Column="1"
+        HorizontalOptions="Center"
+        Spacing="5">
+                <Label FontAttributes="Bold" Text="Windy" TextColor="White"
+ />
+                <Label
+            FontAttributes="Bold"
+            FontSize="Title"
+            Text="{Binding RootModel.current.wind_kph, StringFormat='{0} Km/h'}"
+            TextColor="White" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout
+        Grid.Column="2"
+        HorizontalOptions="Center"
+        Spacing="5">
+                <Label FontAttributes="Bold" Text="Wheather" TextColor="White"/>
+                <Label
+            FontAttributes="Bold"
+            FontSize="Subtitle"
+            LineBreakMode="WordWrap"
+            Text="{Binding RootModel.current.condition.text}"
+            TextColor="White" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <CollectionView Grid.Row="4" ItemsSource="{Binding RootModel.forecast.forecastday}" HeightRequest="210">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="10" Orientation="Horizontal" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame
+                BackgroundColor="#151515"
+                CornerRadius="20"
+                HeightRequest="210"
+                WidthRequest="150">
+                        <VerticalStackLayout
+                    Margin="0,-10,0,0"
+                    Spacing="5"
+                    VerticalOptions="Center">
+                            <Image
+                        HeightRequest="64"
+                        HorizontalOptions="Center"
+                        Source="{Binding day.condition.icon, Converter={StaticResource linkToImage}}"
+                        WidthRequest="64" />
+                            <Label
+                        FontAttributes="Bold"
+                        HorizontalOptions="Center"
+                        Text="{Binding date}"
+                        TextColor="LightGray" />
+                            <Label
+                        HorizontalOptions="StartAndExpand"
+                        Text="{Binding day.maxtemp_c, StringFormat='{0} °C'}"
+                        TextColor="GreenYellow" />
+                            <Label
+                        HorizontalOptions="StartAndExpand"
+                        Text="{Binding day.maxwind_kph, StringFormat='{0} Km/h'}"
+                        TextColor="CadetBlue" />
+                            <Label
+                        FontSize="10"
+                        HorizontalOptions="StartAndExpand"
+                        LineBreakMode="WordWrap"
+                        Text="{Binding day.condition.text}"
+                        TextColor="Yellow" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Grid
+    Grid.Row="3"
+    Grid.RowSpan="4"
+    Margin="-15"
+    BackgroundColor="Black"
+    IsVisible="{Binding IsLoading}"
+    Opacity=".9">
+            <ActivityIndicator IsRunning="{Binding IsLoading}" VerticalOptions="Center" />
+        </Grid>
+
+    </Grid>
+
+
+</ContentPage>
